@@ -1,5 +1,5 @@
 import streamlit as st
-from langchain_openai.chat_models import ChatOpenAI
+from langchain.llms import OpenAI
 
 st.title("Chatbot")
 
@@ -8,7 +8,7 @@ st.title("Chatbot")
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 def generate_response(input_text):
-    model = ChatOpenAI(temperature=0, api_key=openai_api_key)
+    model = OpenAI(temperature=0, api_key=openai_api_key)
     st.info(model.invoke(input_text))
 
 with st.form("my_form"):
