@@ -1,5 +1,14 @@
 import streamlit as st
 from langchain.llms import OpenAI
+from openinference.instrumentation.openai import OpenAIInstrumentor
+from phoenix.otel import register
+
+tracer_provider = register(
+  project_name="lida-chatbot",
+  endpoint="https://app.phoenix.arize.com/v1/traces"
+)
+
+OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
 
 st.title("Chatbot")
 
