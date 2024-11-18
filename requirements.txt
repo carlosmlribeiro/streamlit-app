@@ -4,3 +4,4 @@ langchain
 langchain_community
 arize-phoenix-otel
 openinference-instrumentation-openai
+lida
