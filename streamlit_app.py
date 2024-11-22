@@ -1,27 +1,35 @@
 import streamlit as st
+import os
 from langchain_community.llms import OpenAI
-#from openinference.instrumentation.openai import OpenAIInstrumentor
-#from phoenix.otel import register
+from openinference.instrumentation.openai import OpenAIInstrumentor
+from phoenix.otel import register
 from lida import Manager, TextGenerationConfig , llm
 from PIL import Image
 import io
 import base64
 
-text_gen = llm("openai") # for openai
+@st.cache_resource
+def _register_opentelemetry():
 
-#tracer_provider = register(
-#  project_name="lida-chatbot",
-#  endpoint="https://app.phoenix.arize.com/v1/traces"
-#)
-#OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
+    tracer_provider = register(
+        project_name="lida-example",
+        endpoint="https://app.phoenix.arize.com/v1/traces",
+        )
+    OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
+
 
 st.title("LIDA framework example")
 
 openai_api_key = st.sidebar.text_input("openai API key", type="password")
+#openai_api_key = st.secrets["OPENAI_API_KEY"]
+
 csv_data = st.sidebar.text_input("Path to Data", type="default")
 persona = st.sidebar.text_input("Persona", type="default")
 
-#openai_api_key = st.secrets["OPENAI_API_KEY"]
+phoenix_api_key = st.secrets["PHOENIX_API_KEY"]
+os.environ["PHOENIX_CLIENT_HEADERS"] = "api_key=" + phoenix_api_key
+
+_register_opentelemetry()
 
 lida = Manager(text_gen = llm("openai", api_key=openai_api_key))
 textgen_config = TextGenerationConfig(n=1, temperature=0.5, model="gpt-4o-mini", use_cache=True)
